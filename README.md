@@ -1,5 +1,7 @@
 # ow-bot
 
+* Discord bot that tracks Overwatch stats
+
 ## Building from source
 
 ### Requirements
