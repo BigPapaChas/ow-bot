@@ -29,12 +29,14 @@ func StartServer(b *BotConfig) {
 
 	fmt.Printf("Starting server on port %d\n", config.Port)
 	portString := ":" + strconv.Itoa(config.Port)
-	http.ListenAndServe(portString, handlers.CompressHandler(r))
+	if err := http.ListenAndServe(portString, handlers.CompressHandler(r)); err != nil {
+		fmt.Print(err)
+	}
 }
 
 func defaultResponse(w http.ResponseWriter, req *http.Request) {
-	uptime := time.Now().Sub(startTime)
+	uptime := time.Since(startTime).Truncate(time.Second)
 	fmt.Fprintf(w, "Overwatch bot version: %s\n", config.Version)
 	fmt.Fprintf(w, "Server port: %d\n", config.Port)
-	fmt.Fprintf(w, "Uptime: %s", uptime.Truncate(time.Second))
+	fmt.Fprintf(w, "Uptime: %s", uptime)
 }
