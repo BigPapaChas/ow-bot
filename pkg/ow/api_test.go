@@ -68,5 +68,8 @@ func TestProfileApi(t *testing.T) {
 func testProfileHandler(w http.ResponseWriter, req *http.Request) {
 	data, _ := json.Marshal(testProfile)
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(data)
+	_, err := w.Write(data)
+	if err != nil {
+		panic(err)
+	}
 }
