@@ -59,7 +59,7 @@ type Message struct {
 // 	roles := [3]Role{
 // 		damage, support,
 // 	}
-// 	msg, err := msgBuild(MsgArgs{"Chris", roles})
+// 	msg, err := MsgBuild(MsgArgs{"Chris", roles})
 // 	if err != nil {
 // 		return
 // 	}
@@ -67,8 +67,8 @@ type Message struct {
 // }
 
 // Builds the mesage to be sent to discord
-func msgBuild(args MsgArgs) ([]byte, error) {
-	content := cntBuild(args)
+func MsgBuild(args MsgArgs) ([]byte, error) {
+	content := CntBuild(args)
 	// Possibly want to build the urls for images or use the username to get the bytes for an image here
 	// Example dmgUrl := "https://MyURL/damage_" + args.Usrn
 	embs := make([]map[string]interface{}, 0, 10)
@@ -79,7 +79,7 @@ func msgBuild(args MsgArgs) ([]byte, error) {
 	return json.Marshal(msg)
 }
 
-func cntBuild(args MsgArgs) string {
+func CntBuild(args MsgArgs) string {
 	content := "OW report for: " + args.Usrn
 	for i := 0; i < len(args.Roles); i++ {
 		if args.Roles[i].Role != "" {
