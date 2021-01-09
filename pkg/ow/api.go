@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 // Client will hold the information for consuming from ow-api
@@ -41,6 +42,19 @@ func (c *Client) GetProfile() (*Profile, error) {
 	p := &Profile{}
 	_, err = c.do(req, p)
 	return p, err
+}
+
+// GetHeroes performs a GET on ow-api's /heroes/${heroes} endpoint and returns a Heroes struct
+func (c *Client) GetHeroes(heroes []string) (*Heroes, error) {
+	path := "./heroes/" + strings.Join(heroes, ",")
+	req, err := c.newRequest("GET", path, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	h := &Heroes{}
+	_, err = c.do(req, h)
+	return h, err
 }
 
 // newRequest will create and return a pointer to a http.Request object
