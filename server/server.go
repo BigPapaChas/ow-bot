@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/handlers"
 )
 
-// BotConfig defines the configuration & properties of the server
+// BotConfig defines the configuration & properties of the serverf
 type BotConfig struct {
 	Version string
 	Port    int
