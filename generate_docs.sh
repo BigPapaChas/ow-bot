@@ -62,5 +62,6 @@ function generate_go_documentation {
     echo "Stopped godoc server"
     echo "Go source code documentation generated under ${GO_DOC_HTML_OUTPUT:-godoc}"
 }
+GO_DOC_HTML_OUTPUT=docs
 GO_MODULE=github.com/owbot
 generate_go_documentation
