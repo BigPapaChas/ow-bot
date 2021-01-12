@@ -1,0 +1,23 @@
+name: Generate go-docs
+on:
+  push:
+    branches:
+      - main
+jobs:
+  docs:
+    name: Generate Docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15.x
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+      - name: Generate documentation
+        run: ./generate_docs.sh
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v6
+        with:
+          message: 'Update go documentation'
+          add: './godoc'
