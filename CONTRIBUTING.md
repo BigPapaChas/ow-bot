@@ -16,7 +16,7 @@
 
 # Debugging the server
 
-In vscode, add the following launch configuration then select "runserver" (or "F5") in the debug menu.
+In [VSCode](https://code.visualstudio.com/), add the following launch configuration then select "runserver" in the debug menu. Click ► Play in the debug menu (or F5) to start debugging.
 
 ```json
 {
@@ -47,7 +47,7 @@ In vscode, add the following launch configuration then select "runserver" (or "F
 
 ## Other tools
 
-- [LeoV's Embed Visualizer](https://leovoel.github.io/embed-visualizer/) - Preview how some given embed (JSON payload) might appear on Discord, but it also serves as a reference for some limits. This vizualization tool does not render all types of embeds. Check out the About page for caveats or consult the [Embed docs](https://discord.com/developers/docs/resources/channel#embed-object).
+- [LeoV's Embed Visualizer](https://leovoel.github.io/embed-visualizer/) - Preview how some given embed (JSON payload) might appear on Discord, but it also serves as a reference for some limits. This visualization tool does not render all types of embeds. Check out the About page for caveats or consult the [Embed docs](https://discord.com/developers/docs/resources/channel#embed-object).
 
 <!-- links -->
 
