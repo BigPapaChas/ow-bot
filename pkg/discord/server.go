@@ -1,17 +1,24 @@
 package discord
 
 import (
+	"errors"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/Necroforger/dgrouter/exrouter"
+	"github.com/asaskevich/govalidator"
 	"github.com/bwmarrin/discordgo"
-	"github.com/owbot/pkg/discord/cmd"
 	log "github.com/sirupsen/logrus"
 )
 
-var logger *log.Logger
+// ServerConfig holds args required from user
+type ServerConfig struct {
+	// The Discord bot token
+	BotToken string `valid:"required"`
+	// The bot command prefix
+	Prefix string `valid:"required"`
+}
 
 // Server defines base server configuration.
 type Server struct {
@@ -24,26 +31,33 @@ type Server struct {
 }
 
 // NewServer creates a server with the default config.
-func NewServer(t, p string) (*Server, error) {
-	s, err := discordgo.New("Bot " + t)
+func NewServer(cfg *ServerConfig) (*Server, error) {
+	valid, err := govalidator.ValidateStruct(cfg)
+	if err != nil {
+		return nil, err
+	} else if !valid {
+		return nil, errors.New("invalid user input")
+	}
+
+	s, err := discordgo.New("Bot " + cfg.BotToken)
 	if err != nil {
 		log.Error("failed to initialize discordgo server", err)
 		return nil, err
 	}
-	r := cmd.NewRouter(p)
+	r := NewRouter()
 
 	// create server object
-	srv := &Server{Session: s, Router: r, Prefix: p}
+	srv := &Server{Session: s, Router: r, Prefix: cfg.Prefix}
 	return srv, nil
 }
 
 // Ready registers the routes to discord session then opens the session
 func (s *Server) Ready() error {
 	// add help command
-	// s.Router.Default = s.Router.On("help", cmd.DefaultCmdRun).Desc("prints this help menu")
+	// s.Router.Default = s.Router.On("help", DefaultCmdRun).Desc("prints this help menu")
 
 	// register router
-	cmd.RegisterRouter(s.Router, s.Session, s.Prefix)
+	RegisterRouter(s.Router, s.Session, s.Prefix)
 
 	// open session
 	err := s.Session.Open()
@@ -58,7 +72,7 @@ func (s *Server) WaitToDie() {
 	defer func() {
 		log.Info("Bot is now running.  Press CTRL-C to exit.")
 		sc := make(chan os.Signal, 1)
-		signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+		signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 		<-sc
 		log.Info("\nGracefully exiting...")
 	}()
