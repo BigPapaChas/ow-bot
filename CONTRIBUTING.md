@@ -1,20 +1,26 @@
 
-# Building from source
+# Build and Run
 
 ### Requirements
-* go.15+
+* `go.15+` - [install here](https://golang.org/doc/install)
+* `git clone https://github.com/BigPapaChas/ow-bot.git`
 
 ### Steps
-1. Run `git clone https://github.com/BigPapaChas/ow-bot.git`
-2. Navigate to the `/cmd/bot/` directory within a terminal window or IDE.
-3. Run `go build`. A successful build should have created an executable within `/cmd/bot`.
 
+```bash
+# 1. Run `make build` from within project directory.
+$ make build
+go build -o ./build/runserver ./cmd/bot
+# 2. You may set the bot token as an environment variable or provide it inline.
+$ export BOT_TOKEN=<value>
+# 3. Run the newly created executable.
+$ ./build/runserver --token $BOT_TOKEN --prefix !
+INFO[0000] Bot is now running.  Press CTRL-C to exit.    version=v0.1.0
+# 4. CTRL-C to exit
+Gracefully exiting...                                    version=v0.1.0
+```
 
-# Running the server
-1. Run the executable that was created when building the project.
-2. Navigate to <localhost:8080> to check the status of the server.
-
-# Debugging the server
+# Debugging
 
 In [VSCode](https://code.visualstudio.com/), add the following launch configuration then select "runserver" in the debug menu. Click ► Play in the debug menu (or F5) to start debugging.
 
