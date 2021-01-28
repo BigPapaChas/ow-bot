@@ -1,12 +1,17 @@
-# .PHONY: 
+.PHONY: clean lint runserver build
 
 clean:
 	rm -rf ./build/
+	mkdir -p build
 
 lint:
 	golangci-lint run
 
-build:./build/runserver
+build:
 	go build -o ./build/runserver ./cmd/bot
 
-# runserver: build
+
+BOT_TOKEN=<<unset>>
+PERMISSIONS=<<unset>>
+runserver:
+	./build/runserver -t ${BOT_TOKEN} -p ${PERMISSIONS}
