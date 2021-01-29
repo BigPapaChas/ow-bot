@@ -16,8 +16,10 @@ type BotConfig struct {
 	Port    int
 }
 
-var config *BotConfig
-var startTime = time.Now()
+var (
+	config    *BotConfig
+	startTime = time.Now()
+)
 
 // StartServer starts the http server
 func StartServer(b *BotConfig) {
