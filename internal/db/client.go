@@ -70,9 +70,72 @@ func (c *Client) UpdateCompRankings(battleTag string, rankings Rankings) error {
 	return err
 }
 
+func (c *Client) GetCompDamage(battleTag string) (*Rank, error) {
+	s := &Stats{}
+	err := c.loadStats(battleTag, s)
+	if err != nil {
+		return nil, err
+	}
+	return &s.Competitive.Damage, nil
+}
+
+func (c *Client) GetCompSupport(battleTag string) (*Rank, error) {
+	s := &Stats{}
+	err := c.loadStats(battleTag, s)
+	if err != nil {
+		return nil, err
+	}
+	return &s.Competitive.Damage, nil
+}
+
+func (c *Client) GetCompTank(battleTag string) (*Rank, error) {
+	s := &Stats{}
+	err := c.loadStats(battleTag, s)
+	if err != nil {
+		return nil, err
+	}
+	return &s.Competitive.Tank, nil
+}
+
 func (c *Client) UpdateProfile(p Profile, userID string) error {
 	_, err := c.profileRef.Doc(userID).Set(c.context, p)
 	return err
+}
+
+func (c *Client) AddBattleTag(userID string, battleTag string) error {
+	p := &Profile{}
+	err := c.loadProfile(userID, p)
+	if err != nil {
+		return err
+	}
+	for _, t := range p.BattleTags {
+		if t == battleTag {
+			return nil
+		}
+	}
+	p.BattleTags = append(p.BattleTags, battleTag)
+	_, err = c.profileRef.Doc(userID).Set(c.context, p)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Client) RemoveBattleTag(userID string, battleTag string) error {
+	p := &Profile{}
+	err := c.loadProfile(userID, p)
+	if err != nil {
+		return err
+	}
+	for i, t := range p.BattleTags {
+		if t == battleTag {
+			copy(p.BattleTags[i:], p.BattleTags[i+1:])
+			p.BattleTags[len(p.BattleTags)-1] = ""
+			p.BattleTags = p.BattleTags[:len(p.BattleTags)-1]
+			return nil
+		}
+	}
+	return nil
 }
 
 func (c *Client) loadProfile(userID string, p *Profile) error {
