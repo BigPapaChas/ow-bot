@@ -119,11 +119,7 @@ func (c *Client) AddBattleTag(userID string, battleTag string) error {
 		}
 	}
 	p.BattleTags = append(p.BattleTags, battleTag)
-	_, err = c.profileRef.Doc(userID).Set(c.context, p)
-	if err != nil {
-		return err
-	}
-	return nil
+	return c.UpdateProfile(*p, userID)
 }
 
 func (c *Client) RemoveBattleTag(userID string, battleTag string) error {

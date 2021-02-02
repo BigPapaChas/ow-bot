@@ -10,36 +10,32 @@ import (
 
 func main() {
 	projectID := os.Getenv("PROJECT_ID")
-	profilesCollection := os.Getenv("PROFILES_COLLECTION")
-	statsCollection := os.Getenv("STATS_COLLECTION")
 	collectionPrefix := os.Getenv("COLLECTION_PREFIX")
 
 	log.Printf(projectID)
-	log.Printf(profilesCollection)
-	log.Printf(statsCollection)
 	log.Printf(collectionPrefix)
 
 	dbClient, err := db.NewClient(context.Background(), projectID)
 	if err != nil {
 		log.Fatal(err)
 	}
-	dbClient.InitCollections(collectionPrefix+profilesCollection, collectionPrefix+statsCollection)
+	dbClient.InitCollections(collectionPrefix)
 
-	p := db.Profile{
-		UserID:     "1234",
-		Username:   "BigPapaChas#8534",
-		BattleTags: []string{"BigPapaChas#11352", "Blah#12345"},
-	}
+	// p := db.Profile{
+	// 	UserID:     "1234",
+	// 	Username:   "BigPapaChas#8534",
+	// 	BattleTags: []string{"BigPapaChas#11352", "Blah#12345"},
+	// }
 
-	err = dbClient.UpdateProfile(p, "1234")
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Printf("Successfully created profile:\n %+v\n", p)
+	// err = dbClient.UpdateProfile(p, "1234")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// log.Printf("Successfully created profile:\n %+v\n", p)
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	//id := "1234"
 
@@ -49,10 +45,10 @@ func main() {
 	// 	BattleTags: []string{"BigPapaChas#11352", "Blah#12345"},
 	// }
 
-	err = dbClient.RemoveBattleTag("1234", "ChrisTag#1234")
-	if err != nil {
-		log.Fatal(err)
-	}
+	// err = dbClient.AddBattleTag("1234", "ChrisTag#1234")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	// tags, err := dbClient.GetBattleTags(id)
 	// if err != nil {
