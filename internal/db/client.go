@@ -6,6 +6,11 @@ import (
 	"cloud.google.com/go/firestore"
 )
 
+const (
+	profilesCollectionName = "profiles"
+	statsCollectionName    = "stats"
+)
+
 type Client struct {
 	fsClient   *firestore.Client
 	profileRef *firestore.CollectionRef
@@ -29,9 +34,9 @@ func (c *Client) Close() error {
 	return c.fsClient.Close()
 }
 
-func (c *Client) InitCollections(profileCollection, statsCollection string) {
-	c.profileRef = c.fsClient.Collection(profileCollection)
-	c.statsRef = c.fsClient.Collection(statsCollection)
+func (c *Client) InitCollections(collectionPrefix string) {
+	c.profileRef = c.fsClient.Collection(collectionPrefix + profilesCollectionName)
+	c.statsRef = c.fsClient.Collection(collectionPrefix + statsCollectionName)
 }
 
 func (c *Client) GetBattleTags(userID string) ([]string, error) {
@@ -129,10 +134,8 @@ func (c *Client) RemoveBattleTag(userID string, battleTag string) error {
 	}
 	for i, t := range p.BattleTags {
 		if t == battleTag {
-			copy(p.BattleTags[i:], p.BattleTags[i+1:])
-			p.BattleTags[len(p.BattleTags)-1] = ""
-			p.BattleTags = p.BattleTags[:len(p.BattleTags)-1]
-			return nil
+			p.BattleTags = append(p.BattleTags[:i], p.BattleTags[i+1:]...)
+			return c.UpdateProfile(*p, userID)
 		}
 	}
 	return nil
