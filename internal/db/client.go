@@ -137,6 +137,15 @@ func (c *Client) RemoveBattleTag(userID string, battleTag string) error {
 	return nil
 }
 
+func (c *Client) QueryFollowers(battleTag string) *firestore.DocumentIterator {
+	doc := c.queryDocument(c.profileRef, "battleTags", "array-contains", battleTag)
+	return doc
+}
+
+func (c *Client) queryDocument(colRef *firestore.CollectionRef, path string, qStr string, qVar string) *firestore.DocumentIterator {
+	return colRef.Where(path, qStr, qVar).Documents(c.context)
+}
+
 func (c *Client) loadProfile(userID string, p *Profile) error {
 	return c.loadDocument(c.profileRef, userID, p)
 }

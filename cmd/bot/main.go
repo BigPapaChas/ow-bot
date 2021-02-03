@@ -21,6 +21,18 @@ func main() {
 	}
 	dbClient.InitCollections(collectionPrefix)
 
+	// iter := dbClient.QueryFollowers("BigPapaChas#11352")
+	// for {
+	// 	doc, err := iter.Next()
+	// 	if err == iterator.Done {
+	// 		break
+	// 	}
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// 	fmt.Println(doc.Data())
+	// }
+
 	// p := db.Profile{
 	// 	UserID:     "1234",
 	// 	Username:   "BigPapaChas#8534",
