@@ -138,8 +138,7 @@ func (c *Client) RemoveBattleTag(userID string, battleTag string) error {
 }
 
 func (c *Client) QueryFollowers(battleTag string) *firestore.DocumentIterator {
-	doc := c.queryDocument(c.profileRef, "battleTags", "array-contains", battleTag)
-	return doc
+	return c.queryDocument(c.profileRef, "battleTags", "array-contains", battleTag)
 }
 
 func (c *Client) queryDocument(colRef *firestore.CollectionRef, path string, qStr string, qVar string) *firestore.DocumentIterator {
