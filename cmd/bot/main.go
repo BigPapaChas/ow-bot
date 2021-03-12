@@ -1,10 +1,12 @@
 package main
 
 import (
+	"os"
+	"strings"
+
 	flag "github.com/spf13/pflag"
 
 	"github.com/owbot/pkg/discord"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -16,15 +18,23 @@ var (
 	prefix   = flag.StringP("prefix", "p", "!", "bot command prefix")
 )
 
+func init() {
+	debug := strings.ToLower(os.Getenv("DEBUG"))
+	if debug == "1" || debug == "true" {
+		log.SetLevel(log.DebugLevel)
+		log.Debug("debug logs ON")
+	}
+}
+
 type BotInfoHook struct {
 	version string
 }
 
-func (h *BotInfoHook) Levels() []logrus.Level {
-	return logrus.AllLevels
+func (h *BotInfoHook) Levels() []log.Level {
+	return log.AllLevels
 }
 
-func (h *BotInfoHook) Fire(e *logrus.Entry) error {
+func (h *BotInfoHook) Fire(e *log.Entry) error {
 	e.Data["version"] = version
 	return nil
 }
