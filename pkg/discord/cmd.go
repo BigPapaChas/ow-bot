@@ -2,10 +2,8 @@ package discord
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/Necroforger/dgrouter/exrouter"
-	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -36,58 +34,55 @@ func NewRouter() *exrouter.Route {
 	root.On("ping", PingCmdRun).Desc("responds with pong")
 
 	// Add user commands
-	usrCmd := root.On("user", nil)
-	usrCmd.On(Create, CreateUserCmd).Desc("register new discord user with given BattleTag™")
+	// usrCmd := root.On("user", nil)
 
-	// Assign default/help command last within scope of root command
-	root.Default = root.On("help", func(ctx *exrouter.Context) {
-		_, err := ctx.Reply(Help(ctx, root))
-		if err != nil {
-			log.WithFields(log.Fields{
-				"guildId":   ctx.Msg.GuildID,
-				"discordId": ctx.Msg.Author.ID,
-			}).Errorf("Failed to send help menu. Error: %v\n", err)
-		}
-	}).Desc("prints this help menu")
+	root.On("user", nil).On(Create, CreateUserCmd).Desc("register new discord user with given BattleTag™")
 
 	// Return router with default command paths configured
 	return root
 }
 
 // Help creates a sting containing the help menu
-func Help(ctx *exrouter.Context, root *exrouter.Route) string {
-	var f func(depth int, r *exrouter.Route) string
-	f = func(depth int, r *exrouter.Route) string {
-		text := ""
-		for _, v := range r.Routes {
-			text += strings.Repeat("  ", depth) + v.Name + " : " + v.Description + "\n"
-			text += f(depth+1, &exrouter.Route{Route: v})
-		}
-		return text
-	}
-	return "```" + f(0, root) + "```"
-}
+// func Help(ctx *exrouter.Context, root *exrouter.Route) string {
+// 	var f func(depth int, r *exrouter.Route) string
+// 	f = func(depth int, r *exrouter.Route) string {
+// 		text := ""
+// 		for _, v := range r.Routes {
+// 			text += strings.Repeat("  ", depth) + v.Name + " : " + v.Description + "\n"
+// 			text += f(depth+1, &exrouter.Route{Route: v})
+// 		}
+// 		return text
+// 	}
+// 	return "```" + f(0, root) + "```"
+// }
 
 // PingCmdRun is executed when the ping command is called
 func PingCmdRun(ctx *exrouter.Context) {
-	_, err := ctx.Reply(fmt.Sprintf("%s pong", ctx.Msg.Author.Mention()))
+	log.Debug("pingCmdRun")
+	// _, err := ctx.Reply(fmt.Sprintf("%s pong", ctx.Msg.Author.Mention()))
+	_, err := ctx.Reply("pong")
 	if err != nil {
 		log.WithField("command", "ping").Errorf("Failed to send response. Error %v\n", err)
 	}
 }
 
-// RegisterRouter registers router to discord session
-func RegisterRouter(r *exrouter.Route, s *discordgo.Session, p string) {
-	s.AddHandler(func(_ *discordgo.Session, m *discordgo.MessageCreate) {
-		err := r.FindAndExecute(s, p, s.State.User.ID, m.Message)
-		if err != nil {
-			log.Fatalf("Failed to regsiter router. Error: %v\n", err)
-		}
-	})
-}
+// // RegisterRouter registers router to discord session
+// func RegisterRouter(r *exrouter.Route, s *discordgo.Session, p string) {
+// 	s.AddHandler(func(_ *discordgo.Session, m *discordgo.MessageCreate) {
+// 		lc := log.Fields{
+// 			"route": r.Route.Name,
+// 		}
+// 		log.WithFields(lc).Debug("finding route...")
+// 		err := r.FindAndExecute(s, p, s.State.User.ID, m.Message)
+// 		if err != nil {
+// 			log.WithFields(lc).Fatalf("Could not find route. Error: %v", err)
+// 		}
+// 	})
+// }
 
 // CreateUserCmd creates a new user
 func CreateUserCmd(ctx *exrouter.Context) {
+	log.Debug("CreateUserCmd")
 	id := ctx.Msg.Author.ID
 	un := ctx.Msg.Author.Username
 	bt := ctx.Args.Get(1)

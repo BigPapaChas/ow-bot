@@ -20,6 +20,16 @@ type ServerConfig struct {
 	Prefix string `valid:"required"`
 }
 
+func (c *ServerConfig) validate() error {
+	valid, err := govalidator.ValidateStruct(c)
+	if err != nil {
+		return err
+	} else if !valid {
+		return errors.New("invalid user input")
+	}
+	return nil
+}
+
 // Server defines base server configuration.
 type Server struct {
 	// The discordgo session
@@ -32,16 +42,14 @@ type Server struct {
 
 // NewServer creates a server with the default config.
 func NewServer(cfg *ServerConfig) (*Server, error) {
-	valid, err := govalidator.ValidateStruct(cfg)
+	err := cfg.validate()
 	if err != nil {
 		return nil, err
-	} else if !valid {
-		return nil, errors.New("invalid user input")
 	}
 
 	s, err := discordgo.New("Bot " + cfg.BotToken)
 	if err != nil {
-		log.Error("failed to initialize discordgo server", err)
+		log.Error("Failed to initialize discordgo server", err)
 		return nil, err
 	}
 	r := NewRouter()
@@ -55,9 +63,20 @@ func NewServer(cfg *ServerConfig) (*Server, error) {
 func (s *Server) Ready() error {
 	// add help command
 	// s.Router.Default = s.Router.On("help", DefaultCmdRun).Desc("prints this help menu")
+	// Assign default/help command last within scope of root command
+	s.Router.Default = s.Router.On("help", func(ctx *exrouter.Context) {
+		log.Debug("helpCmdRun")
+		_, err := ctx.Reply("no")
+		if err != nil {
+			log.Fatal(err)
+		}
+	}).Desc("prints this help menu")
 
-	// register router
-	RegisterRouter(s.Router, s.Session, s.Prefix)
+	// register router to discord session
+
+	s.Session.AddHandler(func(_ *discordgo.Session, m *discordgo.MessageCreate) {
+		_ = s.Router.FindAndExecute(s.Session, s.Prefix, s.Session.State.User.ID, m.Message)
+	})
 
 	// open session
 	err := s.Session.Open()
